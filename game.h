@@ -3,7 +3,7 @@
 #include "olcPixelGameEngine.h"
 
 class Window;
-template <typename T> class LinearAnimation;
+template <typename T> class QuadraticAnimation;
 class Button;
 
 struct DropInfo {
@@ -20,15 +20,15 @@ public:
 		P2
 	};
 
-	const olc::Pixel token_colors[3] = {olc::WHITE, olc::RED, olc::BLUE};
-	const std::string token_names[3] = { "Nobody", "RED", "BLUE" };
+	const olc::Pixel token_colors[3] = { olc::WHITE, olc::RED, olc::BLUE };
+	const std::string token_names[3] = { "DRAW", "RED", "BLUE" };
 
 private:
 	void draw_choice(const int& col);
 	void drop(const int& col);
 	int get_selected_col();
 	OccupiedBy check_win();
-	LinearAnimation<DropInfo>* lin_anim = nullptr;
+	QuadraticAnimation<DropInfo>* lin_anim = nullptr;
 	OccupiedBy current_player = OccupiedBy::P1;
 	void handle_gameplay_update(float fElapsedTime);
 	void handle_gampeplay_draw();

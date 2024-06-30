@@ -75,7 +75,7 @@ void Game::handle_gameplay_update(float fElapsedTime) {
 			}
 			if (i > 0) {
 				DropInfo dp = { col * draw_dx + pad1x + draw_dx / 2 , col, i - 1 };
-				lin_anim = new LinearAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, animation_speed, dp);
+				lin_anim = new QuadraticAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, animation_speed, dp);
 			}
 		}
 	}
