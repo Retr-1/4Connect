@@ -19,7 +19,8 @@ public:
 		P2
 	};
 
-	olc::Pixel token_colors[3] = {olc::WHITE, olc::RED, olc::BLUE};
+	const olc::Pixel token_colors[3] = {olc::WHITE, olc::RED, olc::BLUE};
+	const std::string token_names[3] = { "Nobody", "RED", "BLUE" };
 
 private:
 	void draw_choice(const int& col);
@@ -28,12 +29,21 @@ private:
 	OccupiedBy check_win();
 	LinearAnimation<DropInfo>* lin_anim = nullptr;
 	OccupiedBy current_player = OccupiedBy::P1;
+	void handle_gameplay_update(float fElapsedTime);
+	void handle_gampeplay_draw();
+	void handle_gameover_draw();
+	void draw_board();
 
 	float draw_space1y;
 	float draw_space1x;
 	float draw_dy;
 	float draw_dx;
 	float draw_radius;
+
+	static const int animation_speed = 900;
+
+	bool gameover = false;
+	OccupiedBy winner = OccupiedBy::EMPTY;
 
 public:
 	const int nrows;

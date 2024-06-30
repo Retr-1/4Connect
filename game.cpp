@@ -8,18 +8,28 @@ Game::Game(int nrows, int ncols, Window* canvas) : nrows(nrows), ncols(ncols), p
 	this->canvas = canvas;
 }
 
-void Game::draw() {
+void Game::draw_board() {
 	canvas->SetPixelMode(olc::Pixel::Mode::NORMAL);
-	canvas->DrawRect(olc::vi2d(pad1x, pad1y + draw_dy), olc::vi2d(draw_space1x, draw_space1y-draw_dy), olc::WHITE);
+	canvas->DrawRect(olc::vi2d(pad1x, pad1y + draw_dy), olc::vi2d(draw_space1x, draw_space1y - draw_dy), olc::WHITE);
 
 	for (int i = 0; i < ncols; i++) {
 		for (int j = 0; j < nrows; j++) {
 			float x = i * draw_dx + pad1x;
-			float y = (j+1) * draw_dy + pad1y;
+			float y = (j + 1) * draw_dy + pad1y;
 			canvas->FillCircle(olc::vi2d(x + draw_dx / 2, y + draw_dy / 2), draw_radius, token_colors[playfield[j][i]]);
 		}
 	}
+}
+
+void Game::handle_gameover_draw() {
+	draw_board();
+	canvas->DrawString(olc::vi2d(0, 20), token_names[winner] + " WINS!!!", token_colors[winner], 8U);
 	
+}
+
+void Game::handle_gampeplay_draw() {
+	draw_board();
+
 	float r = std::min(draw_dx, draw_dy) / 2 * 0.9;
 
 	if (lin_anim == nullptr) {
@@ -39,17 +49,19 @@ void Game::draw() {
 		canvas->FillCircle(olc::vi2d(lin_anim->data.x, lin_anim->get()), r, token_colors[current_player]);
 		//std::cout << lin_anim->data << ' ' << lin_anim->get() << '\n';
 	}
-
 }
 
-void Game::update(float fElapsedTime) {
-	draw_space1y = this->canvas->ScreenHeight() - pad1y * 2;
-	draw_space1x = this->canvas->ScreenWidth() - pad1x * 2;
-	draw_dy = draw_space1y / (nrows + 1);
-	draw_dx = draw_space1x / ncols;
-	draw_radius = std::min(draw_dx, draw_dy) * 0.75 / 2;
-	//std::cout << draw_dx << ' ' << draw_dy << ' ' << draw_radius << '\n';
+void Game::draw() {
+	if (!gameover) {
+		handle_gampeplay_draw();
+	}
+	else {
+		handle_gameover_draw();
+	}
+}
 
+
+void Game::handle_gameplay_update(float fElapsedTime) {
 	if (lin_anim == nullptr) {
 		if (canvas->GetMouse(olc::Mouse::LEFT).bPressed) {
 			int col = get_selected_col();
@@ -61,7 +73,7 @@ void Game::update(float fElapsedTime) {
 			}
 			if (i > 0) {
 				DropInfo dp = { col * draw_dx + pad1x + draw_dx / 2 , col, i - 1 };
-				lin_anim = new LinearAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, 600, dp);
+				lin_anim = new LinearAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, animation_speed, dp);
 			}
 		}
 	}
@@ -73,16 +85,31 @@ void Game::update(float fElapsedTime) {
 			delete lin_anim;
 			lin_anim = nullptr;
 
-			auto winner = check_win();
+			winner = check_win();
 			if (winner != OccupiedBy::EMPTY) {
 				std::cout << winner << " WINS!!";
+				gameover = true;
 			}
-			
+
 		}
 		else {
 			lin_anim->update(fElapsedTime);
 		}
 	}
+}
+
+void Game::update(float fElapsedTime) {
+	draw_space1y = this->canvas->ScreenHeight() - pad1y * 2;
+	draw_space1x = this->canvas->ScreenWidth() - pad1x * 2;
+	draw_dy = draw_space1y / (nrows + 1);
+	draw_dx = draw_space1x / ncols;
+	draw_radius = std::min(draw_dx, draw_dy) * 0.75 / 2;
+	//std::cout << draw_dx << ' ' << draw_dy << ' ' << draw_radius << '\n';
+
+	if (!gameover) {
+		handle_gameplay_update(fElapsedTime);
+	}
+
 }
 
 int Game::get_selected_col() {
