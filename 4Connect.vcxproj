@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
+    <ClInclude Include="button.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
     <ClInclude Include="window.h" />

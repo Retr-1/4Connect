@@ -4,6 +4,7 @@
 
 class Window;
 template <typename T> class LinearAnimation;
+class Button;
 
 struct DropInfo {
 	int x;
@@ -45,6 +46,9 @@ private:
 	bool gameover = false;
 	OccupiedBy winner = OccupiedBy::EMPTY;
 
+	Button* play_again_btn = nullptr;
+	Button* menu_btn = nullptr;
+
 public:
 	const int nrows;
 	const int ncols;
@@ -66,4 +70,5 @@ public:
 	Game(int nrows, int ncols, Window* canvas);
 	void draw();
 	void update(float fElapsedTime);
+	void reset();
 };

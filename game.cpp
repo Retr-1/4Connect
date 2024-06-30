@@ -2,6 +2,7 @@
 #include "olcPixelGameEngine.h"
 #include "window.h"
 #include "animation.h"
+#include "button.h"
 #include <vector>
 
 Game::Game(int nrows, int ncols, Window* canvas) : nrows(nrows), ncols(ncols), playfield(nrows, std::vector<OccupiedBy>(ncols, OccupiedBy::EMPTY)) {
@@ -24,7 +25,8 @@ void Game::draw_board() {
 void Game::handle_gameover_draw() {
 	draw_board();
 	canvas->DrawString(olc::vi2d(0, 20), token_names[winner] + " WINS!!!", token_colors[winner], 8U);
-	
+	play_again_btn->draw(*canvas);
+	menu_btn->draw(*canvas);
 }
 
 void Game::handle_gampeplay_draw() {
@@ -89,6 +91,8 @@ void Game::handle_gameplay_update(float fElapsedTime) {
 			if (winner != OccupiedBy::EMPTY) {
 				std::cout << winner << " WINS!!";
 				gameover = true;
+				play_again_btn = new Button(10, pad1y + draw_dy, 300, 50, "Play Again");
+				menu_btn = new Button(10, pad1y + draw_dy + play_again_btn->height + 10, 300, 50, "Menu");
 			}
 
 		}
@@ -108,6 +112,18 @@ void Game::update(float fElapsedTime) {
 
 	if (!gameover) {
 		handle_gameplay_update(fElapsedTime);
+	}
+	else {
+		if (canvas->GetMouse(0).bPressed) {
+			auto mx = canvas->GetMouseX();
+			auto my = canvas->GetMouseY();
+			if (play_again_btn->is_pressed(mx, my)) {
+				reset();
+			}
+			else if (menu_btn->is_pressed(mx, my)) {
+				//TODO
+			}
+		}
 	}
 
 }
@@ -171,6 +187,19 @@ Game::OccupiedBy Game::check_win() {
 	return OccupiedBy::EMPTY;
 }
 
+void Game::reset() {
+	gameover = false;
+	for (int i = 0; i < nrows; i++) {
+		for (int j = 0; j < ncols; j++) {
+			playfield[i][j] = OccupiedBy::EMPTY;
+		}
+	}
+	delete play_again_btn;
+	play_again_btn = nullptr;
+	delete menu_btn;
+	menu_btn = nullptr;
+	winner = OccupiedBy::EMPTY;
+}
 //void Game::drop(const int& col) {
 //	int i;
 //	for (i = 0; i < nrows; i++) {
