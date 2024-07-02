@@ -17,15 +17,16 @@ namespace Bot {
 
 			drop(col, nrows, current, playfield);
 
+			int result;
 			switch (current) {
 			case Game::P1:
-				int result = __action(nrows, ncols, playfield, depth + 1, min, std::max(best, max), Game::P2);
+				result = __action(nrows, ncols, playfield, depth + 1, min, std::max(best, max), Game::P2);
 				best = std::max(best, result);
 				//if (best == MAXVALUE) return MAXVALUE;
 				if (min <= best) return best;
 				break;
 			case Game::P2:
-				int result = __action(nrows, ncols, playfield, depth + 1, std::min(best, min), max, Game::P1);
+				result = __action(nrows, ncols, playfield, depth + 1, std::min(best, min), max, Game::P1);
 				best = std::min(best, result);
 				//if (best == MINVALUE) return MINVALUE;
 				if (max >= best) return best;
