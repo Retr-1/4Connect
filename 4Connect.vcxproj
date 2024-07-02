@@ -129,12 +129,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bot.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
+    <ClInclude Include="bot.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="olcPixelGameEngine.h" />

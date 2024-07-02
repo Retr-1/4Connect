@@ -41,15 +41,18 @@ private:
 	float draw_dx;
 	float draw_radius;
 
-	static const int animation_speed = 900;
+	static const int animation_speed = 3000;
 
 	bool gameover = false;
+	bool pve = true;
 	OccupiedBy winner = OccupiedBy::EMPTY;
 
 	Button* play_again_btn = nullptr;
 	Button* menu_btn = nullptr;
 
 public:
+	bool killme = false;
+
 	const int nrows;
 	const int ncols;
 	Window *canvas;

@@ -19,5 +19,10 @@ bool Window::OnUserUpdate(float fElapsedTime)
 		Clear(olc::BLACK);
 		gg.update(fElapsedTime);
 		gg.draw();
+
+		if (gg.killme) {
+			return false;
+		}
+
 		return true;
 }

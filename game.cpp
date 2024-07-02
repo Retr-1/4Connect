@@ -3,6 +3,7 @@
 #include "window.h"
 #include "animation.h"
 #include "button.h"
+#include "bot.h"
 #include <vector>
 
 Game::Game(int nrows, int ncols, Window* canvas) : nrows(nrows), ncols(ncols), playfield(nrows, std::vector<OccupiedBy>(ncols, OccupiedBy::EMPTY)) {
@@ -121,7 +122,7 @@ void Game::update(float fElapsedTime) {
 				reset();
 			}
 			else if (menu_btn->is_pressed(mx, my)) {
-				//TODO
+				killme = true;
 			}
 		}
 	}
