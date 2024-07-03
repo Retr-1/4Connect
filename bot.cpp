@@ -3,7 +3,7 @@
 
 #define MAXVALUE 9999
 #define MINVALUE -9999
-#define MAXDEPTH 5
+#define MAXDEPTH 9
 
 namespace Bot {
 	static int __action(const int& nrows, const int& ncols, std::vector<std::vector<Game::OccupiedBy>>& playfield, unsigned depth, int min, int max, Game::OccupiedBy current) {
@@ -11,29 +11,29 @@ namespace Bot {
 			return evaluate(nrows, ncols, playfield);
 		}
 
+		int curr_eval = evaluate(nrows, ncols, playfield);
+		if (curr_eval == MAXVALUE || curr_eval == MINVALUE) {
+			return curr_eval;
+		}
+
 		int best = current == Game::P1 ? MINVALUE : MAXVALUE;
 		for (int col = 0; col < ncols; col++) {
 			if (playfield[0][col] != Game::OccupiedBy::EMPTY) continue;
 
-			drop(col, nrows, current, playfield);
-
-			int result;
-			switch (current) {
-			case Game::P1:
-				result = __action(nrows, ncols, playfield, depth + 1, min, std::max(best, max), Game::P2);
+			if (current == Game::P1) {
+				drop(col, nrows, current, playfield);
+				int result = __action(nrows, ncols, playfield, depth + 1, min, std::max(best, max), Game::P2);
 				best = std::max(best, result);
-				//if (best == MAXVALUE) return MAXVALUE;
+				undrop(col, nrows, playfield);
 				if (min <= best) return best;
-				break;
-			case Game::P2:
-				result = __action(nrows, ncols, playfield, depth + 1, std::min(best, min), max, Game::P1);
-				best = std::min(best, result);
-				//if (best == MINVALUE) return MINVALUE;
-				if (max >= best) return best;
-				break;
 			}
-
-			undrop(col, nrows, playfield);
+			else { // current == Game::P2 
+				drop(col, nrows, current, playfield);
+				int result = __action(nrows, ncols, playfield, depth + 1, std::min(best, min), max, Game::P1);
+				best = std::min(best, result);
+				undrop(col, nrows, playfield);
+				if (max >= best) return best;
+			}
 		}
 
 		return best;
@@ -47,7 +47,7 @@ namespace Bot {
 			if (playfield[0][col] != Game::OccupiedBy::EMPTY) continue;
 
 			drop(col, nrows, Game::P2, playfield);
-			int result = __action(nrows, ncols, playfield, 1, MAXVALUE, MINVALUE, Game::OccupiedBy::P1);
+			int result = __action(nrows, ncols, playfield, 1, best, MINVALUE, Game::OccupiedBy::P1);
 			if (result < best) {
 				best = result;
 				best_col = col;
@@ -70,10 +70,8 @@ namespace Bot {
 				for (int j = 0; j < ncols - 3; j++) {
 					int k;
 					for (k = 0; k < 4; k++) {
-						if (playfield[i][j + k] != player) goto Unsuccesful;
+						if (playfield[i][j + k] != player) break;
 					}
-					return player;
-					Unsuccesful:;
 					best = std::max(best, k);
 				}
 			}
@@ -83,10 +81,8 @@ namespace Bot {
 				for (int j = 0; j < ncols; j++) {
 					int k;
 					for (k = 0; k < 4; k++) {
-						if (playfield[i + k][j] != player) goto Unsuccesful2;
+						if (playfield[i + k][j] != player) break;
 					}
-					return player;
-				Unsuccesful2:;
 					best = std::max(best, k);
 				}
 			}
@@ -96,10 +92,8 @@ namespace Bot {
 				for (int j = 0; j < ncols - 3; j++) {
 					int k;
 					for (k = 0; k < 4; k++) {
-						if (playfield[i + k][j + k] != player) goto Unsuccesful3;
+						if (playfield[i + k][j + k] != player) break;
 					}
-					return player;
-				Unsuccesful3:;
 					best = std::max(best, k);
 				}
 			}
@@ -109,21 +103,17 @@ namespace Bot {
 				for (int j = 3; j < ncols; j++) {
 					int k;
 					for (k = 0; k < 4; k++) {
-						if (playfield[i + k][j - k] != player) goto Unsuccesful4;
+						if (playfield[i + k][j - k] != player) break;
 					}
-					return player;
-				Unsuccesful4:;
 					best = std::max(best, k);
 				}
 			}
 
-			switch (player) {
-			case Game::P1:
+			if (player == Game::P1) {
 				best1 = best;
-				break;
-			case Game::P2:
+			}
+			else {
 				best2 = best;
-				break;
 			}
 		}
 

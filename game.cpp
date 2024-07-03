@@ -36,8 +36,10 @@ void Game::handle_gampeplay_draw() {
 	float r = std::min(draw_dx, draw_dy) / 2 * 0.9;
 
 	if (lin_anim == nullptr) {
-		int col = get_selected_col();
-		canvas->FillCircle(olc::vi2d(col * draw_dx + draw_dx / 2 + pad1x, pad1y + draw_dy / 2), r, token_colors[current_player]);
+		if (!(current_player == Game::OccupiedBy::P2 && pve)) {
+			int col = get_selected_col();
+			canvas->FillCircle(olc::vi2d(col * draw_dx + draw_dx / 2 + pad1x, pad1y + draw_dy / 2), r, token_colors[current_player]);
+		}
 	}
 	else {
 		float stry = pad1y + draw_dy;
