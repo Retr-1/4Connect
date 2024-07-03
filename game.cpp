@@ -63,21 +63,25 @@ void Game::draw() {
 	}
 }
 
+void Game::handle_gameplay_update_bot() {
+	int col = Bot::action(nrows, ncols, playfield);
+	drop(col);
+}
+
+void Game::handle_gameplay_update_human() {
+	if (canvas->GetMouse(olc::Mouse::LEFT).bPressed) {
+		int col = get_selected_col();
+		drop(col);
+	}
+}
 
 void Game::handle_gameplay_update(float fElapsedTime) {
 	if (lin_anim == nullptr) {
-		if (canvas->GetMouse(olc::Mouse::LEFT).bPressed) {
-			int col = get_selected_col();
-			int i;
-			for (i = 0; i < nrows; i++) {
-				if (playfield[i][col] != OccupiedBy::EMPTY) {
-					break;
-				}
-			}
-			if (i > 0) {
-				DropInfo dp = { col * draw_dx + pad1x + draw_dx / 2 , col, i - 1 };
-				lin_anim = new QuadraticAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, animation_speed, dp);
-			}
+		if (pve && current_player == Game::OccupiedBy::P2) {
+			handle_gameplay_update_bot();
+		}
+		else {
+			handle_gameplay_update_human();
 		}
 	}
 	else {
@@ -115,6 +119,7 @@ void Game::update(float fElapsedTime) {
 		handle_gameplay_update(fElapsedTime);
 	}
 	else {
+		// Updating playagain and menu buttons
 		if (canvas->GetMouse(0).bPressed) {
 			auto mx = canvas->GetMouseX();
 			auto my = canvas->GetMouseY();
@@ -201,16 +206,16 @@ void Game::reset() {
 	menu_btn = nullptr;
 	winner = OccupiedBy::EMPTY;
 }
-//void Game::drop(const int& col) {
-//	int i;
-//	for (i = 0; i < nrows; i++) {
-//		if (playfield[i][col] != OccupiedBy::EMPTY) {
-//			break;
-//		}
-//	}
-//	DropInfo dp = { col * draw_dx + pad1x + draw_dx / 2 , col, i-1 };
-//	lin_anim = new LinearAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, 2, dp);
-//	std::cout << lin_anim->speed << "spe\n";
-//	//std::cout << i << "i\n";
-//	//std::cout << lin_anim->end << "En2\n";
-//}
+
+void Game::drop(const int& col) {
+	int i;
+	for (i = 0; i < nrows; i++) {
+		if (playfield[i][col] != OccupiedBy::EMPTY) {
+			break;
+		}
+	}
+	if (i > 0) {
+		DropInfo dp = { col * draw_dx + pad1x + draw_dx / 2 , col, i - 1 };
+		lin_anim = new QuadraticAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, animation_speed, dp);
+	}
+}

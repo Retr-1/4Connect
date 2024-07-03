@@ -31,6 +31,8 @@ private:
 	QuadraticAnimation<DropInfo>* lin_anim = nullptr;
 	OccupiedBy current_player = OccupiedBy::P1;
 	void handle_gameplay_update(float fElapsedTime);
+	void handle_gameplay_update_bot();
+	void handle_gameplay_update_human();
 	void handle_gampeplay_draw();
 	void handle_gameover_draw();
 	void draw_board();

@@ -40,7 +40,7 @@ namespace Bot {
 	}
 
 	int action(const int& nrows, const int& ncols, std::vector<std::vector<Game::OccupiedBy>>& playfield) {
-		int best_col;
+		int best_col = 0;
 		int best = MAXVALUE;
 
 		for (int col = 0; col < ncols; col++) {
@@ -138,13 +138,13 @@ namespace Bot {
 
 	static void drop(const int& col, const int& nrows, const Game::OccupiedBy& value, std::vector<std::vector<Game::OccupiedBy>>& playfield) {
 		int row;
-		for (row = 0; row < nrows; row++) {
-			if (playfield[row][col] != Game::OccupiedBy::EMPTY) {
+		for (row = 0; row < nrows-1; row++) {
+			if (playfield[row+1][col] != Game::OccupiedBy::EMPTY) {
 				break;
 			}
 		}
 
-		playfield[row - 1][col] = value;
+		playfield[row][col] = value;
 	}
 
 	static void undrop(const int& col, const int& nrows, std::vector<std::vector<Game::OccupiedBy>>& playfield) {
@@ -155,6 +155,6 @@ namespace Bot {
 			}
 		}
 
-		playfield[row - 1][col] = Game::OccupiedBy::EMPTY;
+		playfield[row][col] = Game::OccupiedBy::EMPTY;
 	}
 }
