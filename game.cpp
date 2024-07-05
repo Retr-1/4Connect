@@ -25,7 +25,7 @@ void Game::draw_board() {
 
 void Game::handle_gameover_draw() {
 	draw_board();
-	canvas->DrawString(olc::vi2d(0, 20), token_names[winner] + " WINS!!!", token_colors[winner], 8U);
+	canvas->DrawString(olc::vi2d(0, 20), token_names[winner] + " WINS!!!", token_colors[winner], winner == OccupiedBy::EMPTY ? 7U : 8U);
 	play_again_btn->draw(canvas);
 	menu_btn->draw(canvas);
 }
@@ -97,9 +97,11 @@ void Game::handle_gameplay_update(float fElapsedTime) {
 			winner = check_win();
 			if (winner != OccupiedBy::EMPTY) {
 				std::cout << winner << " WINS!!";
-				gameover = true;
-				play_again_btn = new Button(10, pad1y + draw_dy, 300, 50, "Play Again");
-				menu_btn = new Button(10, pad1y + draw_dy + play_again_btn->height + 10, 300, 50, "Menu");
+				end_game();
+			}
+			else if (check_tie()) {
+				winner = OccupiedBy::EMPTY;
+				end_game();
 			}
 
 		}
@@ -218,4 +220,69 @@ void Game::drop(const int& col) {
 		DropInfo dp = { col * draw_dx + pad1x + draw_dx / 2 , col, i - 1 };
 		lin_anim = new QuadraticAnimation<DropInfo>(pad1y + draw_dy / 2, i * draw_dy + pad1y + draw_dy / 2, animation_speed, dp);
 	}
+}
+
+//bool Game::check_tie() {
+//	for (auto other_player : { OccupiedBy::P1, OccupiedBy::P2 }) {
+//		// horizontal
+//		for (int i = 0; i < nrows; i++) {
+//			for (int j = 0; j < ncols - 3; j++) {
+//				for (int k = 0; k < 4; k++) {
+//					if (playfield[i][j + k] == other_player) goto Unsuccesful;
+//				}
+//				return false;
+//			Unsuccesful:;
+//			}
+//		}
+//
+//		// vertical
+//		for (int i = 0; i < nrows - 3; i++) {
+//			for (int j = 0; j < ncols; j++) {
+//				for (int k = 0; k < 4; k++) {
+//					if (playfield[i + k][j] == other_player) goto Unsuccesful2;
+//				}
+//				return false;
+//			Unsuccesful2:;
+//			}
+//		}
+//
+//		// diagonal to right
+//		for (int i = 0; i < nrows - 3; i++) {
+//			for (int j = 0; j < ncols - 3; j++) {
+//				for (int k = 0; k < 4; k++) {
+//					if (playfield[i + k][j + k] == other_player) goto Unsuccesful3;
+//				}
+//				return false;
+//			Unsuccesful3:;
+//			}
+//		}
+//
+//		// diagonal to left
+//		for (int i = 0; i < nrows - 3; i++) {
+//			for (int j = 3; j < ncols; j++) {
+//				for (int k = 0; k < 4; k++) {
+//					if (playfield[i + k][j - k] == other_player) goto Unsuccesful4;
+//				}
+//				return false;
+//			Unsuccesful4:;
+//			}
+//		}
+//	}
+//
+//	return true;
+//}
+
+bool Game::check_tie() {
+	for (int col = 0; col < ncols; col++) {
+		if (playfield[0][col] == OccupiedBy::EMPTY) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void Game::end_game() {
+	gameover = true;
+	play_again_btn = new Button(10, pad1y + draw_dy, 300, 50, "Play Again");
+	menu_btn = new Button(10, pad1y + draw_dy + play_again_btn->height + 10, 300, 50, "Menu");
 }

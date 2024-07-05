@@ -21,13 +21,15 @@ public:
 	};
 
 	const olc::Pixel token_colors[3] = { olc::WHITE, olc::RED, olc::BLUE };
-	const std::string token_names[3] = { "DRAW", "RED", "BLUE" };
+	const std::string token_names[3] = { "NO ONE", "RED", "BLUE" };
 
 private:
 	void draw_choice(const int& col);
 	void drop(const int& col);
 	int get_selected_col();
 	OccupiedBy check_win();
+	bool check_tie();
+	void end_game();
 	QuadraticAnimation<DropInfo>* lin_anim = nullptr;
 	OccupiedBy current_player = OccupiedBy::P1;
 	void handle_gameplay_update(float fElapsedTime);
