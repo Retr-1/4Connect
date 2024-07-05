@@ -9,8 +9,6 @@ public:
 	int x;
 	int y;
 	std::string text;
-	static float lately_pressed;
-	static float recharge;
 
 	Button(int x, int y, unsigned width, unsigned height, std::string text = "");
 	bool is_pressed(int mx, int my);

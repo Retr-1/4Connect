@@ -10,9 +10,11 @@ Menu::Menu(Window* canvas) : play_vs_human_btn(0, 0, 0, 0, "Play Against Human")
 void Menu::update_sizes() {
 	int w = canvas->ScreenWidth() * 0.8;
 	int h = 200;
-	int x = (canvas->ScreenWidth() - w) / 2;
-	int y = 100;
 	int gap = 10;
+	int total_h = 2 * h + gap;
+	int x = (canvas->ScreenWidth() - w) / 2;
+	int y = canvas->ScreenHeight() / 2 - total_h/2;
+	
 
 	play_vs_human_btn.width = w;
 	play_vs_human_btn.height = h;

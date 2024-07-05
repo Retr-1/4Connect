@@ -20,20 +20,9 @@ bool Button::is_pressed(int mx, int my) {
 }
 
 bool Button::is_pressed(Window* canvas) {
-	if (lately_pressed > 0) {
-		return false;
-	}
-
 	auto mx = canvas->GetMouseX();
 	auto my = canvas->GetMouseY();
 	bool pressed = canvas->GetMouse(0).bPressed && mx >= x && my >= y && mx <= x + width && my <= y + height;
 
-	if (pressed) {
-		lately_pressed = recharge;
-	}
-
 	return pressed;
 }
-
-float Button::lately_pressed = 0;
-float Button::recharge = 3;

@@ -16,10 +16,6 @@ bool Window::OnUserCreate()
 
 bool Window::OnUserUpdate(float fElapsedTime)
 {
-	Button::lately_pressed -= fElapsedTime;
-	if (Button::lately_pressed < 0)
-		Button::lately_pressed = 0;
-
 	Clear(olc::BLACK);
 
 	if (selected == MENU) {
@@ -45,9 +41,6 @@ bool Window::OnUserUpdate(float fElapsedTime)
 			gg.reset();
 		}
 	}
-
-	std::cout << Button::lately_pressed << '\n';
-	
 
 	return true;
 }
