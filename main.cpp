@@ -4,21 +4,6 @@
 #include <vector>
 #include "window.h"
 
-
-
-
-
-
-class Menu {
-
-};
-
-class Button {
-
-};
-
-
-
 int main()
 {
 	//Game demo;

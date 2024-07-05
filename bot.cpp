@@ -3,10 +3,10 @@
 
 #define MAXVALUE 9999
 #define MINVALUE -9999
-#define MAXDEPTH 9
+#define MAXDEPTH 8
 
 namespace Bot {
-	static int __action(const int& nrows, const int& ncols, std::vector<std::vector<Game::OccupiedBy>>& playfield, unsigned depth, int min, int max, Game::OccupiedBy current) {
+	static int __action(const int& nrows, const int& ncols, std::vector<std::vector<Game::OccupiedBy>>& playfield, unsigned depth, int alfa, int beta, Game::OccupiedBy current_player) {
 		if (depth == MAXDEPTH) {
 			return evaluate(nrows, ncols, playfield);
 		}
@@ -16,27 +16,30 @@ namespace Bot {
 			return curr_eval;
 		}
 
-		int best = current == Game::P1 ? MINVALUE : MAXVALUE;
-		for (int col = 0; col < ncols; col++) {
-			if (playfield[0][col] != Game::OccupiedBy::EMPTY) continue;
-
-			if (current == Game::P1) {
-				drop(col, nrows, current, playfield);
-				int result = __action(nrows, ncols, playfield, depth + 1, min, std::max(best, max), Game::P2);
-				best = std::max(best, result);
+		if (current_player == Game::OccupiedBy::P1) {
+			for (int col = 0; col < ncols; col++) {
+				if (playfield[0][col] != Game::OccupiedBy::EMPTY) continue;
+				drop(col, nrows, current_player, playfield);
+				int result = __action(nrows, ncols, playfield, depth + 1, alfa, beta, Game::P2);
+				alfa = std::max(alfa, result);
 				undrop(col, nrows, playfield);
-				if (min <= best) return best;
+				//if (min <= best) return best;
+				if (beta <= alfa) break;
 			}
-			else { // current == Game::P2 
-				drop(col, nrows, current, playfield);
-				int result = __action(nrows, ncols, playfield, depth + 1, std::min(best, min), max, Game::P1);
-				best = std::min(best, result);
-				undrop(col, nrows, playfield);
-				if (max >= best) return best;
-			}
+			return alfa;
 		}
-
-		return best;
+		else {
+			for (int col = 0; col < ncols; col++) {
+				if (playfield[0][col] != Game::OccupiedBy::EMPTY) continue;
+				drop(col, nrows, current_player, playfield);
+				int result = __action(nrows, ncols, playfield, depth + 1, alfa, beta, Game::P1);
+				beta = std::min(beta, result);
+				undrop(col, nrows, playfield);
+				//if (min <= best) return best;
+				if (beta <= alfa) break;
+			}
+			return beta;
+		}
 	}
 
 	int action(const int& nrows, const int& ncols, std::vector<std::vector<Game::OccupiedBy>>& playfield) {
@@ -47,7 +50,7 @@ namespace Bot {
 			if (playfield[0][col] != Game::OccupiedBy::EMPTY) continue;
 
 			drop(col, nrows, Game::P2, playfield);
-			int result = __action(nrows, ncols, playfield, 1, best, MINVALUE, Game::OccupiedBy::P1);
+			int result = __action(nrows, ncols, playfield, 1, MINVALUE, best, Game::OccupiedBy::P1);
 			if (result < best) {
 				best = result;
 				best_col = col;

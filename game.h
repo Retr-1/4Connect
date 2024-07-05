@@ -46,7 +46,6 @@ private:
 	static const int animation_speed = 3000;
 
 	bool gameover = false;
-	bool pve = true;
 	OccupiedBy winner = OccupiedBy::EMPTY;
 
 	Button* play_again_btn = nullptr;
@@ -54,6 +53,8 @@ private:
 
 public:
 	bool killme = false;
+
+	bool pve = true;
 
 	const int nrows;
 	const int ncols;

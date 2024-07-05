@@ -26,8 +26,8 @@ void Game::draw_board() {
 void Game::handle_gameover_draw() {
 	draw_board();
 	canvas->DrawString(olc::vi2d(0, 20), token_names[winner] + " WINS!!!", token_colors[winner], 8U);
-	play_again_btn->draw(*canvas);
-	menu_btn->draw(*canvas);
+	play_again_btn->draw(canvas);
+	menu_btn->draw(canvas);
 }
 
 void Game::handle_gampeplay_draw() {
@@ -122,15 +122,11 @@ void Game::update(float fElapsedTime) {
 	}
 	else {
 		// Updating playagain and menu buttons
-		if (canvas->GetMouse(0).bPressed) {
-			auto mx = canvas->GetMouseX();
-			auto my = canvas->GetMouseY();
-			if (play_again_btn->is_pressed(mx, my)) {
-				reset();
-			}
-			else if (menu_btn->is_pressed(mx, my)) {
-				killme = true;
-			}
+		if (play_again_btn->is_pressed(canvas)) {
+			reset();
+		}
+		else if (menu_btn->is_pressed(canvas)) {
+			killme = true;
 		}
 	}
 
@@ -207,6 +203,8 @@ void Game::reset() {
 	delete menu_btn;
 	menu_btn = nullptr;
 	winner = OccupiedBy::EMPTY;
+	current_player = Game::OccupiedBy::P1;
+	killme = false;
 }
 
 void Game::drop(const int& col) {
